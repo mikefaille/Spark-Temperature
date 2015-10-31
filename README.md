@@ -1,7 +1,7 @@
-To build light .jar for Spark cluster :
+To build light .jar for Spark cluster (without spark depedencies) :
 sbt assemble
 
-To run it standalone :
+To run it standalone (with spark depedencies):
 sbt run
 
 
