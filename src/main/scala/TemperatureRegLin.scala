@@ -1,6 +1,9 @@
+import com.github.nscala_time.time.StaticDateTimeFormat
 import org.apache.spark.mllib.linalg.Vectors
-import org.apache.spark.mllib.regression.{LinearRegressionWithSGD, LabeledPoint}
-import org.apache.spark.{SparkContext, SparkConf}
+import org.apache.spark.mllib.regression.{LabeledPoint, LinearRegressionWithSGD}
+import org.apache.spark.{SparkConf, SparkContext}
+import org.joda.time.format.DateTimeFormat
+import org.joda.time.{DateTime => JodaDateTime}
 
 /**
  * Counts words in new text files created in the given directory
@@ -64,10 +67,14 @@ object TemperatureRegLin {
 //    }.cache()
 
 
+    val fmt = DateTimeFormat.forPattern("yyyyMMdd");
+
 
     val data  =   selectedData.map { row =>
+
+      val unixTime = StaticDateTimeFormat.forPattern("yyyyMMdd").parseDateTime(row(0).asInstanceOf[Int].toString).getMillis
       val features = Vectors.dense(row(1).asInstanceOf[Double])
-     LabeledPoint(row(0).asInstanceOf[Int].toDouble, features)
+     LabeledPoint(unixTime, features)
     }.cache()
 
     val splits = data.randomSplit(Array(0.8, 0.2), seed = 11L)
@@ -84,7 +91,7 @@ object TemperatureRegLin {
 
     val algorithm = new LinearRegressionWithSGD()
     var regression = new LinearRegressionWithSGD().setIntercept(true)
-    regression.optimizer.setStepSize(0.1)
+    regression.optimizer.setStepSize(0.001)
 
     val model = regression run training
 
@@ -102,7 +109,7 @@ object TemperatureRegLin {
 
     val predictionAndLabel = prediction zip(test map(_ label))
 
-    predictionAndLabel.foreach((result) => println(s"predicted label: ${result._1.asInstanceOf[Double].toInt}, actual label: ${result._2.asInstanceOf[Double].toInt}"))
+    predictionAndLabel.foreach((result) => println(s"predicted label: ${result._1}, actual label: ${result._2}"))
 
 //
 //    val MSE = valuesAndPreds.map{case(v, p) => math.pow((v - p), 2)}.mean()
