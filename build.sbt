@@ -10,7 +10,8 @@ resolvers += Resolver.sonatypeRepo("public")
 libraryDependencies ++= Seq(
   "org.apache.spark" %% "spark-core" % "1.5.1"  % "provided" ,
   "org.apache.spark" %% "spark-mllib" % "1.5.1"  % "provided",
-  "com.databricks" %% "spark-csv" % "1.2.0"
+  "com.databricks" %% "spark-csv" % "1.2.0",
+  "com.github.nscala-time" %% "nscala-time" % "2.4.0"
 )
 
 libraryDependencies += "com.github.scopt" % "scopt_2.10" % "3.3.0"
@@ -35,7 +36,7 @@ run in Compile <<= Defaults.runTask(fullClasspath in Compile, mainClass in (Comp
 //assemblySettings
 
 // Configure JAR used with the assembly plug-in
-assemblyJarName := name.value + "-" + version.value + "-assembly.jar"
+assemblyJarName  in assembly  := name.value + "-" + version.value + "-assembly.jar"
 
 // A special option to exclude Scala itself form our assembly JAR, since Spark
 // already bundles Scala.
