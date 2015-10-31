@@ -1,5 +1,5 @@
 To build light .jar for Spark cluster (without spark depedencies) :
-sbt assemble
+sbt assembly
 
 To run it standalone (with spark depedencies):
 sbt run
