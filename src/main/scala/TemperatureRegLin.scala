@@ -4,17 +4,6 @@ import org.apache.spark.{SparkConf, SparkContext}
 import org.joda.time.format.DateTimeFormat
 import org.joda.time.{DateTime => JodaDateTime}
 
-/**
- * Counts words in new text files created in the given directory
- * Usage: HdfsWordCount <directory>
- *   <directory> is the directory that Spark Streaming will use to find and read new text files.
- *
- * To run this on your local machine on directory `localdir`, run this example
- *    $ bin/run-example \
- *       org.apache.spark.examples.streaming.HdfsWordCount localdir
- *
- * Then create a text file in `localdir` and the words in the file will get counted.
- */
 
 
 
@@ -41,7 +30,7 @@ object TemperatureRegLin {
 
     val conf = new SparkConf()
       .setMaster("local[2]")
-      .setAppName("CountingSheep")
+      .setAppName("GSOD_ML")
 
     val sc = new SparkContext(conf)
     sc.setLogLevel("WARN")
