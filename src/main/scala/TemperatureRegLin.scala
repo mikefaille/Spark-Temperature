@@ -1,4 +1,3 @@
-import com.github.nscala_time.time.StaticDateTimeFormat
 import org.apache.spark.mllib.linalg.Vectors
 import org.apache.spark.mllib.regression.{LabeledPoint, LinearRegressionWithSGD}
 import org.apache.spark.{SparkConf, SparkContext}
@@ -59,7 +58,7 @@ object TemperatureRegLin {
 
 
 
-    val selectedData = df.select("Day","Temperature", "Mean Station Pressure", "Mean Visibility")
+    val selectedData = df.select("Day","Temperature", "Mean Station Pressure",  "Mean Visibility", "Minimum Temperature",  "Maximum Temperature" )
 //
 //    val parsedData = selectedData.map { line =>
 //      val parts = line.split(',')
@@ -70,11 +69,20 @@ object TemperatureRegLin {
     val fmt = DateTimeFormat.forPattern("yyyyMMdd");
 
 
+//    val data  =   selectedData.map { row =>
+//
+//      val unixTime = StaticDateTimeFormat.forPattern("yyyyMMdd").parseDateTime(row(0).asInstanceOf[Int].toString).getMillis
+//      val features = Vectors.dense(row(1).asInstanceOf[Double])
+//     LabeledPoint(unixTime, features)
+//    }.cache()
+
+
     val data  =   selectedData.map { row =>
 
-      val unixTime = StaticDateTimeFormat.forPattern("yyyyMMdd").parseDateTime(row(0).asInstanceOf[Int].toString).getMillis
-      val features = Vectors.dense(row(1).asInstanceOf[Double])
-     LabeledPoint(unixTime, features)
+      row(4).asInstanceOf[Double]
+      val temperature = row(1).asInstanceOf[Double]
+      val features = Vectors.dense(row(5).asInstanceOf[Double], row(4).asInstanceOf[Double] )
+      LabeledPoint(temperature, features)
     }.cache()
 
     val splits = data.randomSplit(Array(0.8, 0.2), seed = 11L)
@@ -91,7 +99,7 @@ object TemperatureRegLin {
 
     val algorithm = new LinearRegressionWithSGD()
     var regression = new LinearRegressionWithSGD().setIntercept(true)
-    regression.optimizer.setStepSize(0.001)
+    regression.optimizer.setStepSize(0.0001)
 
     val model = regression run training
 
